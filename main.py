@@ -21,19 +21,20 @@ if __name__ == '__main__':
                         default=raw_data_fp)
 
     parser.add_argument("--wandb_log", type=bool_func,
-                        help="Boolean indicating if results logged as weights and bias run", required=False,
+                        help="Boolean indicating if results should be logged via WandB run", required=False,
                         default=False, choices=[True, False])
 
     parser.add_argument("--preprocess_data", type=bool_func,
-                        help="Indicate if you only want to perform data preprocessing or to also train a model",
+                        help="Boolean indicating if data preprocessing should be performed (or if locally stored "
+                             "preprocessed file should be used)",
                         required=True, choices=[True, False])
 
     parser.add_argument("--train_model", type=bool_func,
-                        help="Indicate if you only want to perform data preprocessing or to also train a model",
+                        help="Boolean indicating if model training should be performed",
                         required=True, choices=[True, False])
 
-    parser.add_argument("--model", type=str, help="ML model algorithm to train",
-                        choices=['LogisticRegression', 'RandomForest', 'XGBoost'], required=False, default=False)
+    parser.add_argument("--model", type=str, help="ML model algorithm used",
+                        choices=['LogisticRegression', 'RandomForest', 'XGBoost'], required=True)
 
     parser.add_argument("--save_locally", type=bool_func, help="Indicates if outputs should be saved to local machine",
                         choices=[True, False], required=False, default=True)

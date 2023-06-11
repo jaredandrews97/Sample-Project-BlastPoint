@@ -1,3 +1,14 @@
+"""
+Module which stores main functions used during the feature engineering step of model training
+
+This module implements the following functionality:
+    1. univariate analysis plot generation
+    2. bivariate analysis plot generation
+
+Author: Jared Andrews
+Date: 6/11/23
+"""
+
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt

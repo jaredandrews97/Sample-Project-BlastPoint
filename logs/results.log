@@ -1,0 +1,13 @@
+train_test_split - INFO - Preprocessed dataframe split into train/test sets successfully
+handle_numeric_cat_feats - INFO - Successfully encoded training data for feature selection (if applicable), HP-tuning and model evaluation
+perform_hp_tuning - INFO - Successfully performed hyperparameter tuning
+model_evaluation - INFO - Successfully generated test metrics and produced analysis plots
+feature_importance_plot - INFO - Successfully generated feature importance plot for model
+shap_plot - INFO - Successfully generated SHAP plot for model
+handle_numeric_cat_feats - INFO - Successfully encoded all data for final model training
+train_evaluate_model - INFO - Final model successfully trained and saved to file locally
+train_evaluate_model - INFO - Using WandB to store and log model training artifacts and results
+train_evaluate_model - INFO - WandB: final model output logged
+train_evaluate_model - INFO - WandB: model analysis outputs and model predictions logged
+train_evaluate_model - INFO - WandB: EDA output plots logged
+train_evaluate_model - INFO - WandB: Raw, intermediate and final datasets logged
