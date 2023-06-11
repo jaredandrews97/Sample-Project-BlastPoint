@@ -34,7 +34,7 @@ def parse_data(fp, logger):
 
     assert os.path.exists(fp), "Specified file path does not exist"
 
-    clean_folder(data_fp, keep_file=fp)
+    clean_folder(data_fp)
 
     try:
         # Read in application data (descriptors of a loan)
@@ -159,6 +159,7 @@ def parse_preprocess_data(args, logger):
     :param logger: Logger
     :return: Preprocessed dataframe
     """
+    print("START: Parsing and initial data preprocessing")
     data = parse_data(args.data_fp, logger)
     data = clean_nans(data, logger)
     data = handle_booleans(data, logger)
@@ -169,5 +170,6 @@ def parse_preprocess_data(args, logger):
 
     logger.info(f"Saving intermediate data to file")
     data.to_csv(intermediate_data_fp, index=False)
+    print("DONE: Parsing and initial data preprocessing")
 
     return data

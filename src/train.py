@@ -1,4 +1,5 @@
 import os
+import wandb
 import warnings
 import numpy as np
 import pandas as pd
@@ -8,8 +9,8 @@ from sklearn.compose import ColumnTransformer, make_column_selector
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 from sklearn.metrics import f1_score, accuracy_score, roc_auc_score, classification_report, RocCurveDisplay
 from sklearn.feature_selection import SequentialFeatureSelector as SFS
-from src.config import base_model_features, analysis_plots_fp, model_funcs, sfs_models, base_param_set, target_feature, \
-    prob_thresholds, models_fp
+from src.config import base_model_features, analysis_plots_fp, model_funcs, sfs_models, base_param_set, \
+    target_feature, prob_thresholds, models_fp, scoring_metrics, eda_plots_fp, data_fp
 from optuna.study import MaxTrialsCallback
 from optuna import create_study
 from optuna.samplers import TPESampler
@@ -18,6 +19,7 @@ from optuna.trial import TrialState
 from functools import partial
 import pickle
 from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
+from src.utils import clean_folder
 
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
@@ -47,16 +49,15 @@ def handle_numeric_cat_feats(train_x, test_x=None, feat_names_final=None):
                                  ("num", MinMaxScaler(), make_column_selector(dtype_include=[float, int]))],
                                 remainder='passthrough')
 
-    train_pp = preproc.fit_transform(train_x)
+    train_encoded = preproc.fit_transform(train_x)
     if isinstance(test_x, type(None)):
         final_feats_out = preproc.get_feature_names_out()
-        train_pp = train_pp[:, [f in feat_names_final for f in final_feats_out]]
+        train_pp = train_encoded[:, [f in feat_names_final for f in final_feats_out]]
         return train_pp
 
-    train_pp = preproc.fit_transform(train_x)
-    test_pp = preproc.transform(test_x)
-    preproc_out_feats = preproc.get_feature_names_out()
-    return train_pp, test_pp, preproc_out_feats
+    test_encoded = preproc.transform(test_x)
+    encoded_out_feats = preproc.get_feature_names_out()
+    return train_encoded, test_encoded, encoded_out_feats
 
 
 def early_stopping_check(study, trial, early_stopping_rounds):
@@ -69,7 +70,7 @@ def early_stopping_check(study, trial, early_stopping_rounds):
 
 def sfs_feat_selection(model, train_x, train_y, train_tcvs, test_x, encode_out_feats, scoring_metric='f1'):
 
-    sfs = SFS(model(), scoring=scoring_metric, cv=train_tcvs)
+    sfs = SFS(model(), scoring=scoring_metric, cv=train_tcvs, n_features_to_select='auto', tol=None)
     sfs.fit(train_x, train_y)
 
     train_x_final = train_x[:, sfs.support_]
@@ -89,7 +90,7 @@ def hp_tuning_objective(trial, X, y, cvs, model, base_params, sample_weight, sco
 
     elif model_name == 'RandomForestClassifier':
         hp_grid = {'n_estimators': trial.suggest_int('n_estimators', 50, 500),
-                   'max_depth': trial.suggest_int('max_depth', 4, 12),
+                   'max_depth': trial.suggest_int('max_depth', 3, 15),
                    'min_samples_split': trial.suggest_int('min_samples_split', 2, 150),
                    'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 60)}
 
@@ -97,11 +98,11 @@ def hp_tuning_objective(trial, X, y, cvs, model, base_params, sample_weight, sco
         hp_grid = {"booster": trial.suggest_categorical("booster", ["gbtree", "gblinear", "dart"]),
                    "lambda": trial.suggest_float("lambda", 1e-8, 1.0, log=True),
                    "alpha": trial.suggest_float("alpha", 1e-8, 1.0, log=True),
-                   "n_estimators": trial.suggest_int("n_estimators", 50, 500, step=50)}
+                   "n_estimators": trial.suggest_int("n_estimators", 40, 500, step=20)}
 
         if hp_grid["booster"] in ["gbtree", "dart"]:
             hp_grid["max_depth"] = trial.suggest_int("max_depth", 1, 7)
-            hp_grid["eta"] = trial.suggest_float("eta", 1e-8, 1.0, log=True)
+            hp_grid["eta"] = trial.suggest_float("eta", 1e-5, 0.1, log=True)
             hp_grid["gamma"] = trial.suggest_float("gamma", 1e-8, 1.0, log=True)
             hp_grid["grow_policy"] = trial.suggest_categorical("grow_policy", ["depthwise", "lossguide"])
         if hp_grid["booster"] == "dart":
@@ -121,12 +122,12 @@ def hp_tuning_objective(trial, X, y, cvs, model, base_params, sample_weight, sco
     return average_cv_score_metric
 
 
-def perform_hp_tuning(model, train_x, train_y, train_tcvs, base_params, sample_weights):
+def perform_hp_tuning(model, train_x, train_y, train_tcvs, base_params, sample_weights, s_metric):
 
     study = create_study(pruner=HyperbandPruner(reduction_factor=2), sampler=TPESampler(n_startup_trials=20, seed=2),
-                         direction="maximize", study_name='xgboost_hp_tuning')
+                         direction="maximize", study_name=f'{model.__name__}_hp_tuning')
     study.optimize(lambda trial: hp_tuning_objective(trial, train_x, train_y, train_tcvs, model, base_params,
-                                                     sample_weights), n_trials=50,
+                                                     sample_weights, scoring_metric=s_metric), n_trials=50,
                    callbacks=[partial(early_stopping_check, early_stopping_rounds=10),
                               MaxTrialsCallback(100, states=(TrialState.COMPLETE,))])
 
@@ -144,7 +145,7 @@ def model_evaluation(model, x, y, threshold=0.5):
 
     acc = accuracy_score(y, test_preds)
     f1 = f1_score(y, test_preds)
-    auc = roc_auc_score(y, test_preds)
+    auc = roc_auc_score(y, test_probs)
     recall = classification_report(y, test_preds, output_dict=True)['1']['recall']
 
     fig, ax = plt.subplots()
@@ -153,7 +154,7 @@ def model_evaluation(model, x, y, threshold=0.5):
     ax.figure.savefig(fig_fp, dpi=300)
     plt.clf()
 
-    return acc, f1, auc, recall, test_preds
+    return acc, f1, auc, recall, test_probs, test_preds
 
 
 def feature_importance_plot(model, feat_names):
@@ -161,16 +162,8 @@ def feature_importance_plot(model, feat_names):
     model_name = type(model).__name__
 
     fig, ax = plt.subplots()
-    importances = model.feature_importances_
-    if model_name != 'XGBClassifier':
-        importance_std = np.std([tree.feature_importances_ for tree in model.estimators_], axis=0)
-        imp_df = pd.DataFrame(zip(importances, importance_std),
-                              index=feat_names).sort_values(0, ascending=False).head(10)
-        importances, importance_std = imp_df[0], imp_df[1]
-        importances.plot.bar(yerr=importance_std, ax=ax)
-    else:
-        importances = pd.Series(importances, index=feat_names).sort_values(ascending=False).head(10)
-        importances.plot.bar(ax=ax)
+    importances = pd.Series(model.feature_importances_, index=feat_names).sort_values(ascending=False).head(10)
+    importances.plot.bar(ax=ax, rot=60)
 
     ax.set_title("Feature importances using MDI")
     ax.set_ylabel("Mean decrease in impurity")
@@ -213,30 +206,34 @@ def save_model(model, model_fp):
 
 def train_evaluate_model(args, data, logger):
 
+    print("START: Model Training")
+
     model_name, log_artifacts = args.model, args.wandb_log
 
-    model = model_funcs[model_name]
-    base_params = base_param_set[model_name]
-    p_thresh = prob_thresholds[model_name]
+    model, base_params, p_thresh, s_metric = model_funcs[model_name], base_param_set[model_name], \
+        prob_thresholds[model_name], scoring_metrics[model_name]
 
     train_x, train_y, test_x, test_y,  train_sw, train_tcvs = train_test_split(data)
     train_x, test_x, encode_out_feats = handle_numeric_cat_feats(train_x, test_x)
 
     if model_name in sfs_models:
-        train_x, test_x, final_feats = sfs_feat_selection(model, train_x, train_y, train_tcvs, test_x, encode_out_feats)
+        train_x, test_x, final_feats = sfs_feat_selection(model, train_x, train_y, train_tcvs, test_x, encode_out_feats,
+                                                          scoring_metric=s_metric)
     else:
         final_feats = encode_out_feats
 
-    best_params = perform_hp_tuning(model, train_x, train_y, train_tcvs, base_params, train_sw)
+    best_params = perform_hp_tuning(model, train_x, train_y, train_tcvs, base_params, train_sw, s_metric=s_metric)
 
     m = model(**best_params)
     m.fit(train_x, train_y, sample_weight=train_sw)
 
-    acc, f1, auc, recall, test_preds = model_evaluation(m, train_x, train_y, threshold=p_thresh)
+    acc, f1, auc, recall, test_probs, test_preds = model_evaluation(m, test_x, test_y, threshold=p_thresh)
+    print(f"Acc: {acc}, F1: {f1}, AUC: {auc}, Recall: {recall}")
 
+    plot_feat_names = [f.replace('cat__', '').replace('num__', '') for f in final_feats]
     if hasattr(m, 'feature_importances_'):
-        feature_importance_plot(m, final_feats)
-    shap_plot(m, test_x, final_feats)
+        feature_importance_plot(m, plot_feat_names)
+    shap_plot(m, test_x, plot_feat_names)
 
     data_x, data_y, data_sw = data[base_model_features], data[target_feature], data['SAMPLE_WEIGHT']
     data_x = handle_numeric_cat_feats(data_x, feat_names_final=final_feats)
@@ -244,3 +241,33 @@ def train_evaluate_model(args, data, logger):
     m.fit(data_x, data_y, sample_weight=data_sw)
     final_model_fp = os.path.join(models_fp, f'{model_name}_model.pkl')
     save_model(m, final_model_fp)
+
+    if args.wandb_log:
+        del best_params['random_state']
+        best_params.update({**{'model': model_name, 'prob_threshold': p_thresh}})
+        with wandb.init(project="loan_approval_project", name=model_name, job_type='model_training',
+                        config=best_params) as run:
+
+            run.save(final_model_fp)
+            run.log({"Accuracy": acc, "F1-Score": f1, "AUC Score": auc, "Recall": recall})
+            model_training_analysis_outputs = wandb.Artifact("model_analysis_outputs", type="predictions_plots")
+            model_training_analysis_outputs.add_dir(analysis_plots_fp, name='analysis_plots')
+            pred_table = wandb.Table(dataframe=pd.DataFrame(zip(test_probs, test_preds)),
+                                     columns=['test_prob_preds', 'test_preds'])
+            model_training_analysis_outputs.add(pred_table, "test_pred_table")
+            run.log_artifact(model_training_analysis_outputs)
+
+            eda_outputs = wandb.Artifact("eda_outputs", type="eda_plots")
+            eda_outputs.add_dir(eda_plots_fp)
+            run.log_artifact(eda_outputs)
+
+            data_artifact = wandb.Artifact("data_files", type="data_files")
+            data_artifact.add_dir(data_fp)
+            run.log_artifact(data_artifact)
+
+    if not args.save_locally:
+        for folder in [eda_plots_fp, data_fp, models_fp, analysis_plots_fp]:
+            clean_folder(folder)
+
+    print("END: Model Training")
+

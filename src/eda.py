@@ -121,6 +121,7 @@ def generate_eda_plots(data, logger):
     :return: None
     """
 
+    print("START: Generation of EDA plots")
     clean_folder(eda_plots_fp)
 
     # Generate plots for
@@ -135,4 +136,5 @@ def generate_eda_plots(data, logger):
 
     data.drop(eda_drop_feats, axis=1, inplace=True)
     logger.info(f"From EDA analysis, features dropped: \n\t{', '.join(eda_drop_feats)}")
+    print("END: Generation of EDA plots")
     return data

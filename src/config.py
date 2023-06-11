@@ -53,8 +53,10 @@ model_funcs = {'LogisticRegression': LogisticRegression, 'RandomForest': RandomF
 
 sfs_models = ['LogisticRegression']
 
+scoring_metrics = {'LogisticRegression': 'f1_weighted', 'RandomForest': 'roc_auc', 'XGBoost': 'roc_auc'}
+
 base_param_set = {'LogisticRegression': {'penalty': 'l2', 'max_iter': 200, "verbose": False, "random_state": 1},
                   'RandomForest': {"random_state": 1},
                   'XGBoost': {"objective": "binary:logistic", "verbosity": 0, "random_state": 1}}
 
-prob_thresholds = {'LogisticRegression': 0.4, 'RandomForest': 0.4, 'XGBoost': 0.36}
+prob_thresholds = {'LogisticRegression': 0.4, 'RandomForest': 0.38, 'XGBoost': 0.35}

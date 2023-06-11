@@ -1,0 +1,41 @@
+{
+    "os": "macOS-13.4-arm64-arm-64bit",
+    "python": "3.10.11",
+    "heartbeatAt": "2023-06-11T16:43:22.086849",
+    "startedAt": "2023-06-11T16:43:21.718398",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "--preprocess_data",
+        "False",
+        "--train_model",
+        "True",
+        "--model",
+        "XGBoost"
+    ],
+    "state": "running",
+    "program": "/Users/jaredandrews/Interviews/Blastpoint/Sample-Project-BlastPoint/main.py",
+    "codePath": "main.py",
+    "git": {
+        "remote": "git@github.com:jaredandrews97/Sample-Project-BlastPoint.git",
+        "commit": "531be86303271dac7c03e8ccfef3f90c39be45a5"
+    },
+    "email": "jaredandrews99@gmail.com",
+    "root": "/Users/jaredandrews/Interviews/Blastpoint/Sample-Project-BlastPoint",
+    "host": "Jareds-MacBook-Pro.local",
+    "username": "jaredandrews",
+    "executable": "/usr/local/bin/python3.10",
+    "cpu_count": 12,
+    "cpu_count_logical": 12,
+    "disk": {
+        "total": 460.4317207336426,
+        "used": 8.444164276123047
+    },
+    "gpuapple": {
+        "type": "arm",
+        "vendor": "Apple"
+    },
+    "memory": {
+        "total": 16.0
+    }
+}

@@ -1,0 +1,58 @@
+wandb_version: 1
+
+C:
+  desc: null
+  value: 0.5153546072515279
+tol:
+  desc: null
+  value: 2.0473509718228873e-05
+penalty:
+  desc: null
+  value: l2
+max_iter:
+  desc: null
+  value: 200
+verbose:
+  desc: null
+  value: false
+model:
+  desc: null
+  value: LogisticRegression
+prob_threshold:
+  desc: null
+  value: 0.4
+_wandb:
+  desc: null
+  value:
+    python_version: 3.10.11
+    cli_version: 0.15.4
+    framework: xgboost
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1686501575.086449
+    t:
+      1:
+      - 1
+      - 5
+      - 6
+      - 35
+      - 53
+      - 55
+      2:
+      - 1
+      - 5
+      - 6
+      - 35
+      - 53
+      - 55
+      3:
+      - 2
+      - 3
+      - 13
+      - 16
+      - 23
+      4: 3.10.11
+      5: 0.15.4
+      8:
+      - 4
+      - 5

@@ -58,6 +58,8 @@ def create_time_sample_weights(df, logger):
 
 
 def process_model_training_data(df, logger):
+    print("START: Feature engineering")
+
     df = shorted_zipcode(df, logger)
     df = group_bank_routing_nums(df, logger)
     df = group_email_dur(df, logger)
@@ -65,9 +67,7 @@ def process_model_training_data(df, logger):
     df = calc_income_feats(df, logger)
     df = create_time_sample_weights(df, logger)
 
-    logger.info(f"Preprocessed data successfully read with dimension: {df.shape}")
-
-    logger.info(f"Saving preprocessed data to file")
+    logger.info(f"Preprocessed data successfully read with dimension: {df.shape}. Saving preprocessed data to file")
     df.to_csv(preprocessed_data_fp, index=False)
-
+    print("END: Feature engineering")
     return df
