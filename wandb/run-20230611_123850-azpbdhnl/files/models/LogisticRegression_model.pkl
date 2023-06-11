@@ -1,1 +1,0 @@
-/Users/jaredandrews/Interviews/Blastpoint/Sample-Project-BlastPoint/models/LogisticRegression_model.pkl

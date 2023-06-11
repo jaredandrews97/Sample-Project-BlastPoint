@@ -169,5 +169,5 @@ cython_debug/
 #.idea/
 
 
-wandb
+wandb/
 wandb-debug.log
