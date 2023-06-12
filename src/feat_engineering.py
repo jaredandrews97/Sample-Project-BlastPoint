@@ -124,6 +124,8 @@ def create_time_sample_weights(df, logger):
     sample_weight_dict = dict(zip(df['year_month'].unique(), np.linspace(1, 3, num=df['year_month'].nunique())))
     # Map application month/year values to sample weight value
     df['SAMPLE_WEIGHT'] = df['year_month'].replace(sample_weight_dict)
+    # drop year_month col created for sample_weights feat
+    df.drop(['year_month'], axis=1, inplace=True)
 
     logger.info("Created time based sample weights")
     return df

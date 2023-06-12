@@ -1,3 +1,85 @@
+parse_data - INFO - Raw data successfully read with dimension: (650, 31)
+clean_nans - INFO - NaNs present in raw data:
+clean_nans - INFO - 	Col: bank_account_duration, Count: 1, Proportion: 0.0015384615384615385
+clean_nans - INFO - 	Col: how_use_money, Count: 2, Proportion: 0.003076923076923077
+clean_nans - INFO - 	Col: payment_amount_approved, Count: 22, Proportion: 0.033846153846153845
+clean_nans - INFO - 	Col: other_phone_type, Count: 291, Proportion: 0.44769230769230767
+clean_nans - INFO - Successfully handled NaN values
+handle_booleans - INFO - Bool Features:
+	residence_rent_or_own, bank_account_direct_deposit, payment_ach, flgGood
+datatype_casting - INFO - Converting address_zip, bank_routing_number to strings
+credit_score_filtering - INFO - 28 rows removed by FICO/L2C filtering
+parse_preprocess_data - INFO - Intermediate data successfully processed with dimension: (620, 29)
+parse_preprocess_data - INFO - Saving intermediate data to file
+univariate_analysis_plot - INFO - Histogram for Amount Requested successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Amount Requested successfully generated and saved to file
+bivariate_analysis_plot - INFO - Barplot for Birth Date successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Status successfully generated and saved to file
+bivariate_analysis_plot - INFO - Barplot for Status successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Residence Rent Or Own successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Residence Rent Or Own successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Monthly Rent Amount successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Monthly Rent Amount successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Bank Account Direct Deposit successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Bank Account Direct Deposit successfully generated and saved to file
+bivariate_analysis_plot - INFO - Barplot for Application When successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Loan Duration successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Loan Duration successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Payment Ach successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Payment Ach successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Num Payments successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Num Payments successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Payment Amount successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Payment Amount successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Amount Approved successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Amount Approved successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Duration Approved successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Duration Approved successfully generated and saved to file
+update - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+update - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+univariate_analysis_plot - INFO - Histogram for Address Zip successfully generated and saved to file
+bivariate_analysis_plot - INFO - Barplot for Address Zip successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Email successfully generated and saved to file
+bivariate_analysis_plot - INFO - Barplot for Email successfully generated and saved to file
+update - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+update - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+univariate_analysis_plot - INFO - Histogram for Bank Routing Number successfully generated and saved to file
+bivariate_analysis_plot - INFO - Barplot for Bank Routing Number successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Email Duration successfully generated and saved to file
+bivariate_analysis_plot - INFO - Barplot for Email Duration successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Residence Duration successfully generated and saved to file
+bivariate_analysis_plot - INFO - Barplot for Residence Duration successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Bank Account Duration successfully generated and saved to file
+bivariate_analysis_plot - INFO - Barplot for Bank Account Duration successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Payment Frequency successfully generated and saved to file
+bivariate_analysis_plot - INFO - Barplot for Payment Frequency successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Home Phone Type successfully generated and saved to file
+bivariate_analysis_plot - INFO - Barplot for Home Phone Type successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for How Use Money successfully generated and saved to file
+bivariate_analysis_plot - INFO - Barplot for How Use Money successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Monthly Income Amount successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Monthly Income Amount successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Raw L2C Score successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Raw L2C Score successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Raw Fico Telecom successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Raw Fico Telecom successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Raw Fico Retail successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Raw Fico Retail successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Raw Fico Bank Card successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Raw Fico Bank Card successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Raw Fico Money successfully generated and saved to file
+bivariate_analysis_plot - INFO - Scatterplot for Raw Fico Money successfully generated and saved to file
+univariate_analysis_plot - INFO - Histogram for Flggood successfully generated and saved to file
+generate_eda_plots - INFO - Plots for all features successfully generated
+generate_eda_plots - INFO - From EDA analysis, features dropped: 
+	status, email, home_phone_type, how_use_money, birth_date
+shorted_zipcode - INFO - Original number of zipcodes: 193, New number of shortened zipcodes: 3
+group_bank_routing_nums - INFO - Original number of routing numbers: 130, New number of grouped routing numbers: 9
+group_email_dur - INFO - Grouped 0-6 months and 7-12 months email duration categories
+group_residence_bank_acc_durs - INFO - Grouped 0-3 months and 4-12 months residence duration/bank account duration categories
+calc_income_rent_feats - INFO - Created monthly income after rent and pays rent features
+create_time_sample_weights - INFO - Created time based sample weights
+process_model_training_data - INFO - Preprocessed data successfully read with dimension: (620, 27). Saving preprocessed data to file
 train_test_split - INFO - Preprocessed dataframe split into train/test sets successfully
 handle_numeric_cat_feats - INFO - Successfully encoded training data for feature selection (if applicable), HP-tuning and model evaluation
 perform_hp_tuning - INFO - Successfully performed hyperparameter tuning

@@ -52,7 +52,8 @@ def parse_data(fp, logger):
     # Merge app data and loan performance data; note merge occurs on customer_id and not on loanid; 3 customers had
     # good and bad loan performances and so impossible to determine if app data is for good bad loan
     data = app_data.merge(loan_performance, on=['customer_id'])
-
+    # Drop unnecessary customer_id and idLoan features (unique identifiers)
+    data.drop(['customer_id', 'idLoan'], axis=1, inplace=True)
     # Determine if missing columns exist in input data
     missing_cols = list(set(input_cols) - set(data.columns))
     assert len(missing_cols) == 0, f"Input data is missing following features: {str(missing_cols)}"

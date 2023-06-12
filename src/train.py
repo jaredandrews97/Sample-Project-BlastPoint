@@ -324,13 +324,14 @@ def feature_importance_plot(model, feat_names, logger):
     # Produce series which contains the feature importances for the top 10 most important features
     importances = pd.Series(model.feature_importances_, index=feat_names).sort_values(ascending=False).head(10)
     # Produce a barplot of the most important features and set title and y label
-    importances.plot.bar(ax=ax, rot=60)
+    importances.plot.barh(ax=ax)
     ax.set_title("Feature importances using MDI")
-    ax.set_ylabel("Mean decrease in impurity")
+    ax.set_xlabel("Mean decrease in impurity")
+    ax.invert_yaxis()
     fig.tight_layout()
     fig_fp = os.path.join(analysis_plots_fp, f'{type(model).__name__}_feat_importance_plot.png')
     # Save barplot to file
-    fig.savefig(fig_fp, dpi=300)
+    fig.savefig(fig_fp, dpi=500)
     plt.clf()
 
     logger.info("Successfully generated feature importance plot for model")

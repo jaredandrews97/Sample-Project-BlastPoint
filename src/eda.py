@@ -12,7 +12,7 @@ Date: 6/11/23
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
-from src.config import eda_plots_fp, target_feature, eda_drop_feats
+from src.config import eda_plots_fp, target_feature, eda_drop_feats, rotate_plot_feats
 from src.utils import clean_folder
 
 
@@ -41,10 +41,13 @@ def univariate_analysis_plot(col, dt, logger):
     plt.title(f"{col_name_hist} for Individuals Requesting Loans")
     plt.xlabel(col_name_hist)
     plt.ylabel("Count")
-    plt.xticks(rotation=0, ha='center')
 
     # Save figure to file locally
     fig_fp = os.path.join(eda_plots_fp, f'{col_name}_hist.png')
+    # Rotate feats with long value strings so that plot is properly formatted
+    if col_name in rotate_plot_feats:
+        plt.xticks(rotation=30)
+    plt.tight_layout()
     ax.figure.savefig(fig_fp, dpi=300)
     # clear plot for next image
     plt.clf()
@@ -65,7 +68,6 @@ def bivariate_analysis_plot(df, col_name, dt, logger):
 
     # Set colum plot name and file path to save plot to
     col_name_plot = col_name.replace('_', ' ').title()
-    fig_fp = os.path.join(eda_plots_fp, f'{col_name}_scatter.png')
 
     # If column is an integer, plot scatter plot of col x target feature
     if dt in [float, int]:
@@ -115,7 +117,12 @@ def bivariate_analysis_plot(df, col_name, dt, logger):
         # Drop the newly derived date column used for plotting
         df.drop(new_col_name, axis=1, inplace=True)
 
+    fig_fp = os.path.join(eda_plots_fp, f'{col_name}_{plot_type.lower()}.png')
+    # Rotate feats with long value strings so that plot is properly formatted
+    if col_name in rotate_plot_feats:
+        plt.xticks(rotation=30)
     # Save figure to file locally
+    plt.tight_layout()
     ax.figure.savefig(fig_fp, dpi=300)
     # clear plot for next image
     plt.clf()

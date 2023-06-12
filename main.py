@@ -4,7 +4,7 @@ import argparse
 import pandas as pd
 from src.data import parse_preprocess_data
 from src.eda import generate_eda_plots
-from src.config import raw_data_fp, logs_fp, preprocessed_data_fp
+from src.config import raw_data_fp, logs_fp, preprocessed_data_fp, preprocessed_data_types, date_cols
 from src.feat_engineering import process_model_training_data
 from src.train import train_evaluate_model
 from src.utils import bool_func
@@ -54,7 +54,8 @@ if __name__ == '__main__':
         # Read in saved preprocessed data
         assert os.path.exists(preprocessed_data_fp), "Preprocessed data not saved to file. " \
                                                      "Please run data preprocessing steps"
-        preprocessed_df = pd.read_csv(preprocessed_data_fp)
+        preprocessed_df = pd.read_csv(preprocessed_data_fp, dtype=preprocessed_data_types, low_memory=False,
+                                      parse_dates=['application_when'])
 
     if args.train_model:
 
